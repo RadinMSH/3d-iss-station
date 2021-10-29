@@ -1,1 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title> 3D ISS </title>
+        <meta name="description" content="3D ISS satellite history, description, information and view in 3D world!" />
+        <meta name="viewport" content="width=device-width" />
+        <meta property="og:title" content="3D ISS Satellite" />
+        <meta property="twitter:title" content="3D ISS Satellite" />
+        <meta property="og:description" content="3D ISS satellite history, description, information and view in 3D world!" />
+        <meta property="twitter:description" content="3D ISS satellite history, description, information and view in 3D world!" />
+        <meta property="og:type" content="article, 3D Graphics" />
+        <meta property="article:publisher" content="Radin Masiha" />
+        <meta property="twitter:creator" content="@RadinMasiha" />
+        <meta charset="UTF-16" />
+        <style>
+            
+            
+            @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+            
+            body {
+                background: #000;
+                margin: 0;
+            }
+            
+            article {
+                width: 100vw;
+                height: 100vh;
+                opacity: 0;
+                z-index: 1;
+                display: none;
+            }
+            
+            progress {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            
+            * {
+                color: #fff;
+                box-sizing: border-box;
+                transition: 1s;
+            }
+            
+            h1 {
+                text-align: center;
+                font-family: Times New Roman, serif;
+            }
+            
+            p {
+                font-family: Poppins, sans-serif;
+                margin: 5px;
+                text-indent: 50px;
+                font-size: 15px;
+            }
+            
+            sup {
+                color: red;
+                font-size: 20px;
+            }
+            
+            a {
+                color: red;
+                text-decoration: none;
+            }
+            
+            h2 {
+                text-align: center;
+            }
+            
+            img {
+                width: 100vw;
+                z-index: -1;
+                position: fixed;
+                -webkit-position: fixed;
+                pointer-events: none;
+            }
+            
+            button {
+                background: transparent;
+                font-size: 20px;
+                padding: 10px;
+                border-radius: 7.5px;
+                margin: 50px auto;
+                display: block;
+            }
+            
+            canvas {
+                z-index: 2;
+                display: none;
+                opacity: 0;
+                width: 100vw;
+                height: 100vh;
+            }
+            
+            canvas, progress, article {
+                position: absolute;
+                -webkit-position: absolute;
+            }
+            
+            ::selection {text-shadow: 3px 3px 3px #f00;}
+            
+            h1::selection {text-shadow: 3px 3px 5px rgba(255, 255, 255, .75);}
+            
+            a::selection, sup::selection {color: white;}
+            
+            
+        </style>
+    </head>
+    <body>
+        <progress></progress>
+        <article>
+            <img src="https://imgur.com/ZtVo9SJ.jpg" onerror="setTimeout(() => this.remove(), 500)" />
+            <h1> ISS </h1>
+            <p> The ISS is an <sup>I</sup>nternational <sup>S</sup>pace <sup>S</sup>tation, which five space agencies involved in building it: NASA (United States), Roscosmos (Russia), JAXA (Japan), ESA (Europe), CSA (Canada). The station serves as a microgravity and space environment research laboratory in which scientific research is conducted in astrobiology, astronomy, meteorology, physics, and other fields. The ISS is suited for testing the spacecraft systems and equipment required for possible future long-duration missions to the Moon and Mars. </p>
+            <p> The ISS programme evolved from the Space Station Freedom, an American proposal which was conceived in 1984 to construct a p
 
+ermanently manned Earth-orbiting station, and the contemporaneous Soviet/Russian Mir-2 proposal from 1976 with similar aims. It's the ninth space station, and it's currently the biggest artificial object in the space that you can see it using your naked eyes! It has a distance of 404 kilometers (250 miles) from earth. It circles the earth completely each 93 minutes, which means 15.5 rounds per day! </p>
+            <p> To see ISS, just look at the sky, and try to find a shining light that moves fast and if you are lucky, you will find it! If it is a flashing light or has red lights, that's probably just an airplane. To know where the stations currently are, <a target="_blank" href="https://spotthestation.nasa.gov"> NASA</a> is here to help you! </p>
+            <p> But If you really want to see it in the real world, I made a program, that you can view ISS in 3D world with real size! Tap the button to start! </p>
+            <h2> About Project </h2>
+            <p> Use your finger or mouse and left mouse to rotate the scene, use mouse wheel or two fingers to make it smaller. Make sure that you're not using Internet Explorer and Safari version less than 10.3, your JavaScript option is enabled. </p>
+            <h2> Differences </h2>
+            <p> Everything is real in this world, the size, the positions(somehow), and other details! Just the ISS doesn't rotate earth, moon rotates earth once per 27 minutes, which should be once per 27 days. </p>
+            <button> Enter 3D World </button>
+        </article>
+        <canvas> Browser not supporting &lt;canvas> </canvas>
+        <script type="module">
+            
+            
+            import * as Graph from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/build/three.module.js';
+            import {OrbitControls} from "https://threejsfundamentals.org/threejs/resources/threejs/r127/examples/jsm/controls/OrbitControls.js";
+            import {GLTFLoader} from "https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js";
+            
+            window.onload = () => {
+                const article = document.querySelector("article");
+                const canvas = document.querySelector("canvas");
+                const progress = document.querySelector("progress");
+                const planet = document.querySelector("img");
+                const enter = document.querySelector("button");
+                const root = document.documentElement;
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const ratio = window.devicePixelRatio;
+                const km = 1000;
+                let load = 0;
+                
+                if(navigator.onLine) {
+                    article.style.display = "block";
+                    setTimeout(() => article.style.opacity = 1, 1);
+                    progress.style.opacity = 0;
+                }
+                
+                setTimeout(() => setInterval(() => planet.style.top = root.clientHeight - planet.height + 'px', 100), 100);
+                
+                enter.onclick = () => {
+                    article.style.opacity = 0;
+                    setTimeout(() => article.remove(), 1000);
+                    progress.style.opacity = 1;
+                    
+                    const rand = (min, max) => {
+                        return Math.random() * (max - min) + min;
+                    };
+                    
+                    if(!navigator.onLine) {
+                        console.error("Make sure your internet connection is on");
+                    }
+                    
+                    const scene = new Graph.Scene();
+                    const cam = new Graph.PerspectiveCamera(45, w/h, .1, 1500 * km ** 3);
+                    const loader = new Graph.TextureLoader();
+                    const light = new Graph.PointLight(0xffffff, 1.5);
+                    const controls = new OrbitControls(cam, canvas);
+                    const renderer = new Graph.WebGLRenderer({canvas, antialias:true});
+                    const moonPivot = new Graph.Object3D();
+                    
+                    const moonGeo = new Graph.SphereGeometry(1700 * km, 100, 100);
+                    const earthGeo = new Graph.SphereGeometry(6400 * km, 100, 100);
+                    const sunGeo = new Graph.SphereGeometry(700 * km ** 2, 100, 100);
+                    const moonMat = new Graph.MeshLambertMaterial({color:0xbbbbbb});
+                    const earthMat = new Graph.MeshLambertMaterial({map: loader.load("Textures/Earth.jpg", () => load++)});
+                    const sunMat = new Graph.MeshLambertMaterial({map: loader.load("Textures/Sun.jpg", () => load++), polygonOffset:true, polygonOffsetFactor: -.1});
+                    const earth = new Graph.Mesh(earthGeo, earthMat);
+                    const moon = new Graph.Mesh(moonGeo, moonMat);
+                    const sun = new Graph.Mesh(sunGeo, sunMat); 
+                    
+                    loader.load("Textures/Space.jpg", space => {
+                        space.encoding = Graph.sRGBEncoding;
+                        space.mapping = Graph.EquirectangularReflectionMapping;
+                        space.anisotropy = 50;
+                        scene.background = space;
+                        load++;
+                    });
+                    
+                    new GLTFLoader().load("ISS.glb", glb => {
+                        const iss = glb.scene;
+                        
+                        iss.position.z = 6700 * km;
+                        iss.scale.set(50, 50, 50);
+                        cam.position.z = iss.position.z + 500;
+                        controls.target.z = iss.position.z;
+                        scene.add(iss);
+                        
+                        setInterval(() => {
+                            if(load == 3) {
+                                canvas.style.display = "block";
+                                
+                                setTimeout(() => {
+                                    canvas.style.opacity = 1;
+                                    progress.style.opacity = 0;
+                                }, 10);
+                            }
+                        }, 100);
+                    });
+                    
+                    moon.position.set(0, 30 * km ** 2, -380 * km ** 2);
+                    sun.position.z = 150 * km ** 3 + 6400 * km;
+                    sun.renderOrder = -1;
+                    light.position.z = 75 * km ** 3;
+                    moonPivot.add(moon);
+                    controls.enablePan = false;
+                    scene.add(light, sun, earth, moonPivot);
+                    
+                    const update = () => {
+                        const width = canvas.clientWidth * ratio | 0;
+                        const height = canvas.clientHeight * ratio | 0;
+                        
+                        renderer.setSize(width, height, false);
+                        cam.aspect = w/h;
+                        cam.updateProjectionMatrix();
+                        earth.rotation.y -= 8 / (60 ** 2);
+                        moonPivot.rotation.y -= 8 / (60 ** 2 * 27);
+                        renderer.render(scene, cam);
+                        requestAnimationFrame(update);
+                    };
+                    requestAnimationFrame(update);
+                };
+            };
+            
+            
+        </script>
+        <noscript>
+            <h3> OOPS! </h3>
+            <p> You're probable using a browser not supporting JS, or maybe you've changed something in settings! Change your browser or its settings and retry 😬 </p>
+        </noscript>
+    </body>
+</html>
