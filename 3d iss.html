@@ -51,7 +51,7 @@
                 font-family: Poppins, sans-serif;
                 margin: 5px;
                 text-indent: 50px;
-                font-size: 15px;
+                font-size: 17px;
             }
             
             sup {
@@ -179,7 +179,7 @@ ermanently manned Earth-orbiting station, and the contemporaneous Soviet/Russian
                     const sunGeo = new Graph.SphereGeometry(700 * km ** 2, 100, 100);
                     const moonMat = new Graph.MeshLambertMaterial({color:0xbbbbbb});
                     const earthMat = new Graph.MeshLambertMaterial({map: loader.load("Textures/Earth.jpg", () => load++)});
-                    const sunMat = new Graph.MeshLambertMaterial({map: loader.load("Textures/Sun.jpg", () => load++), polygonOffset:true, polygonOffsetFactor: -.1});
+                    const sunMat = new Graph.MeshLambertMaterial({map: loader.load("Textures/Sun.jpg", () => load++)});
                     const earth = new Graph.Mesh(earthGeo, earthMat);
                     const moon = new Graph.Mesh(moonGeo, moonMat);
                     const sun = new Graph.Mesh(sunGeo, sunMat); 
